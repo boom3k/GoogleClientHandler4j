@@ -11,33 +11,47 @@ import com.google.gson.JsonObject;
 import net.lingala.zip4j.exception.ZipException;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class OAuth2 {
     static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
     static final JacksonFactory JSON_FACTORY = new JacksonFactory();
+    static GoogleClientSecrets googleClientSecrets;
     static GoogleCredential.Builder clientBuilder;
+    static GoogleClientSecrets.Details details;
     static String ACCESS_TOKEN;
     static String REFRESH_TOKEN;
+    static OAuth2 instance;
 
-    public OAuth2(String clientSecret, String clientId, boolean n) {
-        /*GoogleClientSecrets.Details details = new GoogleClientSecrets.Details();
+    private OAuth2() {
+    }
+
+    static synchronized public OAuth2 getInstance() {
+        if (instance == null) {
+            instance = new OAuth2();
+        }
+        return instance;
+    }
+
+    /**
+     * @param inputStreamReader inputStreamReader of Files
+     */
+    public OAuth2 setCredentialsFromStream(InputStreamReader inputStreamReader) {
+        try {
+            details = GoogleClientSecrets.load(JSON_FACTORY, inputStreamReader).getInstalled();
+            googleClientSecrets = new GoogleClientSecrets().setInstalled(details);
+            return this;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public OAuth2 setCredentialsClientSecrets(String clientSecret, String clientId) {
         details.setClientSecret(clientSecret);
         details.setClientId(clientId);
-        details.setTokenUri("https://oauth2.googleapis.com/token");
-        details.setAuthUri("https://accounts.google.com/o/oauth2/auth");
-        List<String> redirectUris = new ArrayList<>();
-        redirectUris.add("urn:ietf:wg:oauth:2.0:oob");
-        redirectUris.add("http://localhost");
-        details.setRedirectUris(redirectUris);
-        GoogleClientSecrets googleClientSecrets = new GoogleClientSecrets();
-        googleClientSecrets.setInstalled(details);*/
-        clientBuilder = new GoogleCredential.Builder()
-                .setClientSecrets(clientSecret, clientId)
-                .setTransport(HTTP_TRANSPORT)
-                .setJsonFactory(JSON_FACTORY);
+        googleClientSecrets = new GoogleClientSecrets().setInstalled(details);
+        return this;
 
     }
 
@@ -45,7 +59,7 @@ public class OAuth2 {
      * @param zipFilePath     path to the zip holding the client secrets json file
      * @param zipFilePassword password of zip holding the client secrets json file
      */
-    public OAuth2(String zipFilePath, String zipFilePassword) {
+    public OAuth2 setCredentialsFromZip(String zipFilePath, String zipFilePassword) {
         try {
             Map<String, InputStream> allZippedFiles = Zip3k.getAllZippedFiles(zipFilePath, zipFilePassword);
             for (String fileName : allZippedFiles.keySet()) {
@@ -54,44 +68,25 @@ public class OAuth2 {
                 }
                 JsonObject jsonObject = new Gson().fromJson(new InputStreamReader(Zip3k.getAllZippedFiles(zipFilePath, zipFilePassword).get(fileName)), JsonObject.class);
                 if (jsonObject.has("installed")) {
-                    new OAuth2(new InputStreamReader(allZippedFiles.get(fileName)));
+                    return setCredentialsFromStream(new InputStreamReader(allZippedFiles.get(fileName)));
                 }
             }
         } catch (ZipException e) {
             e.printStackTrace();
         }
-
-    }
-
-    /**
-     * @param zipFileReader inputStreamReader of Files
-     */
-    public OAuth2(InputStreamReader zipFileReader) {
-        try {
-            GoogleClientSecrets.Details details = GoogleClientSecrets.load(JSON_FACTORY, zipFileReader).getInstalled();
-            new OAuth2(details.getClientSecret(), details.getClientId(), true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
-     * @param filePath path to client secrets file
-     */
-    public OAuth2(File filePath) {
-        try {
-            new OAuth2(new FileReader(filePath));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        return null;
     }
 
     /**
      * @param credentialFilePath path to client secret json
      */
-    public OAuth2(String credentialFilePath) {
-        new OAuth2(new File((credentialFilePath)));
+    public OAuth2 setCredentialsFromFilePath(String credentialFilePath) {
+        try {
+            return setCredentialsFromStream(new FileReader(new File(credentialFilePath)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -113,7 +108,10 @@ public class OAuth2 {
             System.out.println("Please initialize OAuth2 client with tokens before calling!");
             return null;
         }
-        return clientBuilder.build()
+        return new GoogleCredential.Builder()
+                .setClientSecrets(googleClientSecrets)
+                .setTransport(HTTP_TRANSPORT)
+                .setJsonFactory(JSON_FACTORY).build()
                 .setAccessToken(ACCESS_TOKEN)
                 .setRefreshToken(REFRESH_TOKEN);
     }

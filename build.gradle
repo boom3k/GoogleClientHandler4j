@@ -15,6 +15,7 @@ repositories {
 }
 
 dependencies {
+    compile fileTree(dir: 'libs')
     testCompile group: 'junit', name: 'junit', version: '4.12'
     implementation 'com.github.boom3k:zip3k:master-SNAPSHOT'
     compile group: 'com.google.api-client', name: 'google-api-client', version: '1.28.0'

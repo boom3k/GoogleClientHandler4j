@@ -4,7 +4,6 @@ import boom3k.Zip3k;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.lingala.zip4j.exception.ZipException;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -15,28 +14,48 @@ import java.util.Map;
 
 public class ServiceAccount {
 
-    static GoogleCredential.Builder clientBuilder;
+    static GoogleCredential.Builder clientBuilder = new GoogleCredential.Builder();
+    static GoogleCredential credential = new GoogleCredential();
+    static String userName = "NULL";
+    static List<String> scopes = new ArrayList<>();
+    static ServiceAccount instance;
+
+    private ServiceAccount() {
+    }
+
+    static synchronized public ServiceAccount getInstance() {
+        if (instance == null) {
+            instance = new ServiceAccount();
+        }
+        return instance;
+    }
 
     /**
      * @param inputStream InputStream of a ServiceAccount json file
+     * @return this
      */
-    public ServiceAccount(InputStream inputStream) {
+    public ServiceAccount setCredentialsFromInputStream(InputStream inputStream) {
         try {
-            clientBuilder = GoogleCredential.fromStream(inputStream).toBuilder();
+            credential = GoogleCredential.fromStream(inputStream);
+            clientBuilder = credential.toBuilder();
+            return this;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     /**
      * @param credentialFilePath path to service account json
+     * @return this
      */
-    public ServiceAccount(String credentialFilePath) {
+    public ServiceAccount setCredentialsFromPath(String credentialFilePath) {
         try {
-            new ServiceAccount(new FileInputStream(new File(credentialFilePath)));
+            return setCredentialsFromInputStream(new FileInputStream(new File(credentialFilePath)));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     /**
@@ -45,29 +64,39 @@ public class ServiceAccount {
      * @param zipFilePath path to zipped credentials
      * @param zipPassword password to zipped credentials
      */
-    public ServiceAccount(String zipFilePath, String zipPassword) throws ZipException {
-        Map<String, InputStream> allZippedFiles = Zip3k.getAllZippedFiles(zipFilePath, zipPassword);
-        for (String fileName : allZippedFiles.keySet()) {
-            if (!fileName.contains(".json")) {
-                continue;
+    public ServiceAccount setCredentialsFromZip(String zipFilePath, String zipPassword) {
+        try {
+            Map<String, InputStream> allZippedFiles = Zip3k.getAllZippedFiles(zipFilePath, zipPassword);
+            for (String fileName : allZippedFiles.keySet()) {
+                if (!fileName.contains(".json")) {
+                    continue;
+                }
+                JsonObject jsonObject = (JsonObject) new JsonParser().parse(new InputStreamReader(Zip3k.getAllZippedFiles(zipFilePath, zipPassword).get(fileName)));
+                if (jsonObject.has("private_key")) {
+                    return setCredentialsFromInputStream(allZippedFiles.get(fileName));
+                }
             }
-            JsonObject jsonObject = (JsonObject) new JsonParser().parse(new InputStreamReader(Zip3k.getAllZippedFiles(zipFilePath, zipPassword).get(fileName)));
-            if (jsonObject.has("private_key")) {
-                new ServiceAccount(allZippedFiles.get(fileName));
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return null;
+
     }
 
     /**
-     * @param scopes list of scopes used for this account
+     * @param newScopes list of scopes used for this account
      * @return this
      */
-    public ServiceAccount setMultipleScopes(List<String> scopes) {
-        this.clientBuilder.setServiceAccountScopes(scopes);
+    public ServiceAccount setMultipleScopes(List<String> newScopes) {
+        scopes = newScopes;
+        clientBuilder.setServiceAccountScopes(scopes);
         return this;
     }
 
-    public ServiceAccount setSingleScope(String scope){
+    /**
+     * @param scope
+     */
+    public ServiceAccount setSingleScope(String scope) {
         List<String> scopes = new ArrayList<>();
         scopes.add(scope);
         setMultipleScopes(scopes);
@@ -85,19 +114,40 @@ public class ServiceAccount {
             for (String scope : line.split(",\r\n")) {
                 SCOPES.add(scope);
             }
-            return this.setMultipleScopes(SCOPES);
+            return setMultipleScopes(SCOPES);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+
     }
 
     /**
-     * @param userName username for subject to act as
+     * @param newUserName for subject to act as
      * @return Returns a Google Credential acting as the user provided
      */
-    public static GoogleCredential getSubjectClient(String userName) {
+    public static GoogleCredential getClient(String newUserName) {
+        if (newUserName != userName) {
+            System.out.println("ServiceAccountUser is ->(" + newUserName + "), was ->(" + userName + ")");
+            userName = newUserName;
+        }
+
         return clientBuilder.setServiceAccountUser(userName).build();
     }
 
+    public static GoogleCredential.Builder getClientBuilder() {
+        return clientBuilder;
+    }
+
+    public static GoogleCredential getCredential() {
+        return credential;
+    }
+
+    public static String getUserName() {
+        return userName;
+    }
+
+    public static List<String> getScopes() {
+        return scopes;
+    }
 }
