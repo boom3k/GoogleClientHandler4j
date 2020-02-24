@@ -28,4 +28,5 @@ workspace.xml
 rebel.xml
 *_configuration.json
 scopes.txt
+IgnoredTests.java
 google-prod.json
