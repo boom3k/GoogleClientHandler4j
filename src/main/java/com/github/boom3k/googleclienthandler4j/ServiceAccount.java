@@ -11,9 +11,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ServiceAccount {
-
     static GoogleCredential.Builder clientBuilder = new GoogleCredential.Builder();
     static GoogleCredential credential = new GoogleCredential();
     static String userName = "NULL";
@@ -21,6 +21,7 @@ public class ServiceAccount {
     static ServiceAccount instance;
 
     private ServiceAccount() {
+
     }
 
     static synchronized public ServiceAccount getInstance() {
@@ -87,7 +88,7 @@ public class ServiceAccount {
      * @param newScopes list of scopes used for this account
      * @return this
      */
-    public ServiceAccount setMultipleScopes(List<String> newScopes) {
+    public ServiceAccount setScopes(List<String> newScopes) {
         scopes = newScopes;
         clientBuilder.setServiceAccountScopes(scopes);
         return this;
@@ -96,30 +97,39 @@ public class ServiceAccount {
     /**
      * @param scope
      */
-    public ServiceAccount setSingleScope(String scope) {
+    public ServiceAccount setScopes(String scope) {
         List<String> scopes = new ArrayList<>();
         scopes.add(scope);
-        setMultipleScopes(scopes);
+        setScopes(scopes);
         return this;
     }
 
     /**
-     * @param ScopesFilePath path to a file with comma separated scopes
+     * @param scopesJsonFile path to a json file with comma separated scopes
      * @return this
      */
-    public ServiceAccount setMultipleScopes(String ScopesFilePath) {
+    public ServiceAccount setScopes(File scopesJsonFile) {
         try {
             List<String> SCOPES = new ArrayList<>();
-            String line = new String(Files.readAllBytes(Paths.get(ScopesFilePath)));
+            String line = new String(Files.readAllBytes(Paths.get(scopesJsonFile.getAbsolutePath())));
             for (String scope : line.split(",\r\n")) {
                 SCOPES.add(scope);
             }
-            return setMultipleScopes(SCOPES);
+            return setScopes(SCOPES);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
 
+    }
+
+    /**
+     * @param scopesSet Set of scopes provided directly form the library
+     * @return this
+     */
+    public ServiceAccount setScopes(Set<String> scopesSet) {
+        clientBuilder.setServiceAccountScopes(scopesSet);
+        return this;
     }
 
     /**
@@ -131,7 +141,6 @@ public class ServiceAccount {
             System.out.println("ServiceAccountUser is ->(" + newUserName + "), was ->(" + userName + ")");
             userName = newUserName;
         }
-
         return clientBuilder.setServiceAccountUser(userName).build();
     }
 
@@ -150,4 +159,5 @@ public class ServiceAccount {
     public static List<String> getScopes() {
         return scopes;
     }
+
 }
