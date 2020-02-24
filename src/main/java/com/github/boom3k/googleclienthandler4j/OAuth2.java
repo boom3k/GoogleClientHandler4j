@@ -17,7 +17,6 @@ public class OAuth2 {
     static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
     static final JacksonFactory JSON_FACTORY = new JacksonFactory();
     static GoogleClientSecrets googleClientSecrets;
-    static GoogleCredential.Builder clientBuilder;
     static GoogleClientSecrets.Details details;
     static String ACCESS_TOKEN;
     static String REFRESH_TOKEN;
@@ -47,6 +46,10 @@ public class OAuth2 {
         return null;
     }
 
+    /**
+     * @param clientId     clientSecret
+     * @param clientSecret clientId
+     */
     public OAuth2 setCredentialsClientSecrets(String clientSecret, String clientId) {
         details.setClientSecret(clientSecret);
         details.setClientId(clientId);
