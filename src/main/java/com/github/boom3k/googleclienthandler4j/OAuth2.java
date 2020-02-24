@@ -23,6 +23,7 @@ public class OAuth2 {
     static OAuth2 instance;
 
     private OAuth2() {
+        System.out.println("OAuth2 client Awaiting Tokens....");
     }
 
     static synchronized public OAuth2 getInstance() {
@@ -71,6 +72,11 @@ public class OAuth2 {
                 }
                 JsonObject jsonObject = new Gson().fromJson(new InputStreamReader(Zip3k.getAllZippedFiles(zipFilePath, zipFilePassword).get(fileName)), JsonObject.class);
                 if (jsonObject.has("installed")) {
+                    if (jsonObject.has("tokens")) {
+                        JsonObject tokens = jsonObject.get("tokens").getAsJsonObject();
+                        setTokens(tokens.get("access_token").getAsString(),
+                                tokens.get("access_token").getAsString());
+                    }
                     return setCredentialsFromStream(new InputStreamReader(allZippedFiles.get(fileName)));
                 }
             }
@@ -100,6 +106,7 @@ public class OAuth2 {
     public OAuth2 setTokens(String accessToken, String refreshToken) {
         this.ACCESS_TOKEN = accessToken;
         this.REFRESH_TOKEN = refreshToken;
+        System.out.println("Tokens set!!");
         return this;
     }
 
