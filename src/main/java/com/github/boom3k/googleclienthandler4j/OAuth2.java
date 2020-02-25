@@ -113,10 +113,9 @@ public class OAuth2 {
     /**
      * @return A Google credential object that is built using the Access and Refresh Token
      */
-    public static GoogleCredential getClient() {
+    public static GoogleCredential getClient() throws Exception {
         if (ACCESS_TOKEN == null || REFRESH_TOKEN == null) {
-            System.out.println("Please initialize OAuth2 client with tokens before calling!");
-            return null;
+            throw new Exception("Tokens have not been set for OAuth2 object.");
         }
         return new GoogleCredential.Builder()
                 .setClientSecrets(googleClientSecrets)

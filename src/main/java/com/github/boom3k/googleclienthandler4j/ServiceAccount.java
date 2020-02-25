@@ -14,10 +14,10 @@ import java.util.Map;
 import java.util.Set;
 
 public class ServiceAccount {
-    static GoogleCredential.Builder clientBuilder = new GoogleCredential.Builder();
-    static GoogleCredential credential = new GoogleCredential();
+    static GoogleCredential.Builder clientBuilder;
+    static GoogleCredential credential;
     static String userName = "NULL";
-    static List<String> scopes = new ArrayList<>();
+    static List<String> scopes;
     static ServiceAccount instance;
 
     private ServiceAccount() {
@@ -33,22 +33,22 @@ public class ServiceAccount {
 
     /**
      * @param inputStream InputStream of a ServiceAccount json file
-     * @return this
+     * @return getInstance()
      */
     public ServiceAccount setCredentialsFromInputStream(InputStream inputStream) {
         try {
             credential = GoogleCredential.fromStream(inputStream);
             clientBuilder = credential.toBuilder();
-            return this;
+            return getInstance();
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     /**
      * @param credentialFilePath path to service account json
-     * @return this
+     * @return getInstance()
      */
     public ServiceAccount setCredentialsFromPath(String credentialFilePath) {
         try {
@@ -77,21 +77,22 @@ public class ServiceAccount {
                     return setCredentialsFromInputStream(allZippedFiles.get(fileName));
                 }
             }
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
 
     }
 
     /**
      * @param newScopes list of scopes used for this account
-     * @return this
+     * @return getInstance()
      */
     public ServiceAccount setScopes(List<String> newScopes) {
         scopes = newScopes;
         clientBuilder.setServiceAccountScopes(scopes);
-        return this;
+        return getInstance();
     }
 
     /**
@@ -101,12 +102,12 @@ public class ServiceAccount {
         List<String> scopes = new ArrayList<>();
         scopes.add(scope);
         setScopes(scopes);
-        return this;
+        return getInstance();
     }
 
     /**
      * @param scopesJsonFile path to a json file with comma separated scopes
-     * @return this
+     * @return getInstance()
      */
     public ServiceAccount setScopes(File scopesJsonFile) {
         try {
@@ -125,39 +126,28 @@ public class ServiceAccount {
 
     /**
      * @param scopesSet Set of scopes provided directly form the library
-     * @return this
+     * @return getInstance()
      */
     public ServiceAccount setScopes(Set<String> scopesSet) {
         clientBuilder.setServiceAccountScopes(scopesSet);
-        return this;
+        return getInstance();
     }
 
     /**
      * @param newUserName for subject to act as
      * @return Returns a Google Credential acting as the user provided
      */
-    public static GoogleCredential getClient(String newUserName) {
+    public GoogleCredential getHttpClient(String newUserName) throws Exception {
+        if (clientBuilder == null) {
+            throw new Exception("ServiceAccount object has not been initialized");
+        }
+        if (clientBuilder.getServiceAccountScopes() == null || clientBuilder.getServiceAccountScopes().isEmpty()) {
+            throw new Exception("Scopes have not been set for serviceAccount object.");
+        }
         if (newUserName != userName) {
             System.out.println("ServiceAccountUser is ->(" + newUserName + "), was ->(" + userName + ")");
             userName = newUserName;
         }
         return clientBuilder.setServiceAccountUser(userName).build();
     }
-
-    public static GoogleCredential.Builder getClientBuilder() {
-        return clientBuilder;
-    }
-
-    public static GoogleCredential getCredential() {
-        return credential;
-    }
-
-    public static String getUserName() {
-        return userName;
-    }
-
-    public static List<String> getScopes() {
-        return scopes;
-    }
-
 }

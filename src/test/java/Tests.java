@@ -1,13 +1,7 @@
 import com.github.boom3k.googleclienthandler4j.OAuth2;
 import com.github.boom3k.googleclienthandler4j.ServiceAccount;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.DriveScopes;
 import org.junit.Test;
-
-import java.io.IOException;
 
 public class Tests {
     final String dummyServiceAccountFilePath = "DUMMY_CREDENTIALS\\DUMMY_serviceAccount.json";
@@ -18,10 +12,10 @@ public class Tests {
     final String dummyScope = "https://www.googleapis.com/auth/drive";
 
     @Test
-    public void zippedServiceAccountCredentialsTest() {
+    public void zippedServiceAccountCredentialsTest() throws Exception {
         GoogleCredential googleCredential = ServiceAccount.getInstance().setCredentialsFromZip(dummyZipPath, dummyPassword)
-                .setMultipleScopes(dummyScopesFilePath)
-                .getClient("user@test.com");
+                .setScopes(dummyScopesFilePath)
+                .getHttpClient("user@test.com");
         System.out.println(googleCredential.getServiceAccountProjectId());
         System.out.println(googleCredential.getServiceAccountPrivateKeyId());
         System.out.println(googleCredential.getServiceAccountPrivateKey());
@@ -32,10 +26,10 @@ public class Tests {
     }
 
     @Test
-    public void serviceAccountClientTest() {
+    public void serviceAccountClientTest() throws Exception {
         GoogleCredential googleCredential = ServiceAccount.getInstance().setCredentialsFromPath(dummyServiceAccountFilePath)
-                .setSingleScope(dummyScope)
-                .getClient("user@test.com");
+                .setScopes(dummyScope)
+                .getHttpClient("user@test.com");
         System.out.println(googleCredential.getServiceAccountProjectId());
         System.out.println(googleCredential.getServiceAccountPrivateKeyId());
         System.out.println(googleCredential.getServiceAccountPrivateKey());
@@ -47,7 +41,7 @@ public class Tests {
     }
 
     @Test
-    public void oAuth2ClientTest() {
+    public void oAuth2ClientTest() throws Exception {
         final GoogleCredential oAuth2 = OAuth2.getInstance()
                 .setCredentialsFromFilePath(dummyOAuth2FilePath)
                 .setTokens("OIEJ", "oiafjeij")
@@ -58,7 +52,7 @@ public class Tests {
     }
 
     @Test
-    public void zippedOAuth2ClientTest() {
+    public void zippedOAuth2ClientTest() throws Exception {
         final GoogleCredential oAuth2 = OAuth2.getInstance()
                 .setCredentialsFromZip(dummyZipPath, dummyPassword)
                 .setTokens("OIEJ", "oiafjeij")
