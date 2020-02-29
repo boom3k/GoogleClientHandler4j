@@ -8,7 +8,7 @@ public class Tests {
     final String dummyOAuth2FilePath = "DUMMY_CREDENTIALS\\DUMMY_client_secrets.json";
     final String dummyScopesFilePath = "DUMMY_CREDENTIALS\\DUMMY_scopes.txt";
     final String dummyZipPath = "DUMMY_CREDENTIALS\\DUMMY_credentials.zip";
-    final String dummyPassword = "p@$$word";
+    final String dummyPassword = "dummy";
     final String dummyScope = "https://www.googleapis.com/auth/drive";
 
     @Test
@@ -54,7 +54,7 @@ public class Tests {
     @Test
     public void zippedOAuth2ClientTest() throws Exception {
         final GoogleCredential oAuth2 = OAuth2.getInstance()
-                .setZipEncryptedFile(dummyZipPath, dummyPassword)
+                .setCredentials(dummyZipPath, dummyPassword)
                 .setTokens("OIEJ", "oiafjeij")
                 .getClient();
         System.out.println(oAuth2.getAccessToken());

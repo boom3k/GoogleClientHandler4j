@@ -36,10 +36,11 @@ public class OAuth2 {
     /**
      * @param inputStreamReader inputStreamReader of Files
      */
-    public OAuth2 setCredentialsFromStream(InputStreamReader inputStreamReader) {
+    public OAuth2 setClientSecrets(InputStreamReader inputStreamReader) {
         try {
             details = GoogleClientSecrets.load(JSON_FACTORY, inputStreamReader).getInstalled();
             googleClientSecrets = new GoogleClientSecrets().setInstalled(details);
+            System.out.println("OAuth2 credentials set!");
             return this;
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,19 +52,19 @@ public class OAuth2 {
      * @param clientId     clientSecret
      * @param clientSecret clientId
      */
-    public OAuth2 setClientSecrets(String clientSecret, String clientId) {
+    public OAuth2 setClientSecrets(String clientSecret, String clientId, boolean isAdmin) {
         details.setClientSecret(clientSecret);
         details.setClientId(clientId);
         googleClientSecrets = new GoogleClientSecrets().setInstalled(details);
+        System.out.println("OAuth2 credentials set!");
         return this;
-
     }
 
     /**
      * @param zipFilePath     path to the zip holding the client secrets json file
      * @param zipFilePassword password of zip holding the client secrets json file
      */
-    public OAuth2 setZipEncryptedFile(String zipFilePath, String zipFilePassword) {
+    public OAuth2 setClientSecrets(String zipFilePath, String zipFilePassword) {
         try {
             Map<String, InputStream> allZippedFiles = Zip3k.getAllZippedFiles(zipFilePath, zipFilePassword);
             for (String fileName : allZippedFiles.keySet()) {
@@ -77,7 +78,7 @@ public class OAuth2 {
                         setTokens(tokens.get("access_token").getAsString(),
                                 tokens.get("access_token").getAsString());
                     }
-                    return setCredentialsFromStream(new InputStreamReader(allZippedFiles.get(fileName)));
+                    return setClientSecrets(new InputStreamReader(allZippedFiles.get(fileName)));
                 }
             }
         } catch (ZipException e) {
@@ -89,9 +90,9 @@ public class OAuth2 {
     /**
      * @param credentialFilePath path to client secret json
      */
-    public OAuth2 setFilePath(String credentialFilePath) {
+    public OAuth2 setClientSecrets(String credentialFilePath) {
         try {
-            return setCredentialsFromStream(new FileReader(new File(credentialFilePath)));
+            return setClientSecrets(new FileReader(new File(credentialFilePath)));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -106,7 +107,7 @@ public class OAuth2 {
     public OAuth2 setTokens(String accessToken, String refreshToken) {
         this.ACCESS_TOKEN = accessToken;
         this.REFRESH_TOKEN = refreshToken;
-        System.out.println("Tokens set!!");
+        System.out.println("OAuth2 tokens set!");
         return this;
     }
 

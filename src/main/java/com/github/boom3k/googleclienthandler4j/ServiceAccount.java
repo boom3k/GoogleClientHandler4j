@@ -31,6 +31,7 @@ public class ServiceAccount {
         return instance;
     }
 
+    /** TOP */
     /**
      * @param inputStream InputStream of a ServiceAccount json file
      * @return this
@@ -39,7 +40,8 @@ public class ServiceAccount {
         try {
             credential = GoogleCredential.fromStream(inputStream);
             clientBuilder = credential.toBuilder();
-            return getInstance();
+            System.out.println("ServiceAccount credentials set!");
+            return this;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -85,24 +87,27 @@ public class ServiceAccount {
 
     }
 
+    /** TOP */
     /**
      * @param newScopes list of scopes used for this account
-     * @return getInstance()
+     * @return this
      */
     public ServiceAccount setScopes(List<String> newScopes) {
         scopes = newScopes;
         clientBuilder.setServiceAccountScopes(scopes);
-        return getInstance();
+        System.out.println("ServiceAccount scopes set!");
+
+        return this;
     }
 
     /**
-     * @param scope
+     * @param singleScope
      */
-    public ServiceAccount setScopes(String scope) {
+    public ServiceAccount setScopes(String singleScope) {
         List<String> scopes = new ArrayList<>();
-        scopes.add(scope);
+        scopes.add(singleScope);
         setScopes(scopes);
-        return getInstance();
+        return this;
     }
 
     /**
@@ -125,17 +130,8 @@ public class ServiceAccount {
     }
 
     /**
-     * @param scopesSet Set of scopes provided directly form the library
-     * @return this
-     */
-    public ServiceAccount setScopes(Set<String> scopesSet) {
-        clientBuilder.setServiceAccountScopes(scopesSet);
-        return getInstance();
-    }
-
-    /**
      * @param newUserName for subject to act as
-     * @return Returns a Google Credential acting as the provided userName
+     * @return Returns a Google Credential acting as the user provided
      */
     public GoogleCredential getHttpClient(String newUserName) throws Exception {
         if (clientBuilder == null) {
@@ -145,7 +141,7 @@ public class ServiceAccount {
             throw new Exception("Scopes have not been set for serviceAccount object.");
         }
         if (newUserName != userName) {
-            System.out.println("ServiceAccountUser ->(" + userName + ") is now ->(" + newUserName + ")");
+            System.out.println("ServiceAccountUser is ->(" + newUserName + "), was ->(" + userName + ")");
             userName = newUserName;
         }
         return clientBuilder.setServiceAccountUser(userName).build();
