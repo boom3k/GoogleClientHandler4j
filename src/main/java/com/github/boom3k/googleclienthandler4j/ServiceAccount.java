@@ -33,9 +33,9 @@ public class ServiceAccount {
 
     /**
      * @param inputStream InputStream of a ServiceAccount json file
-     * @return getInstance()
+     * @return this
      */
-    public ServiceAccount setCredentialsFromInputStream(InputStream inputStream) {
+    public ServiceAccount setCredentials(InputStream inputStream) {
         try {
             credential = GoogleCredential.fromStream(inputStream);
             clientBuilder = credential.toBuilder();
@@ -48,11 +48,11 @@ public class ServiceAccount {
 
     /**
      * @param credentialFilePath path to service account json
-     * @return getInstance()
+     * @return this
      */
-    public ServiceAccount setCredentialsFromPath(String credentialFilePath) {
+    public ServiceAccount setCredentials(String credentialFilePath) {
         try {
-            return setCredentialsFromInputStream(new FileInputStream(new File(credentialFilePath)));
+            return setCredentials(new FileInputStream(new File(credentialFilePath)));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -65,7 +65,7 @@ public class ServiceAccount {
      * @param zipFilePath path to zipped credentials
      * @param zipPassword password to zipped credentials
      */
-    public ServiceAccount setCredentialsFromZip(String zipFilePath, String zipPassword) {
+    public ServiceAccount setCredentials(String zipFilePath, String zipPassword) {
         try {
             Map<String, InputStream> allZippedFiles = Zip3k.getAllZippedFiles(zipFilePath, zipPassword);
             for (String fileName : allZippedFiles.keySet()) {
@@ -74,7 +74,7 @@ public class ServiceAccount {
                 }
                 JsonObject jsonObject = (JsonObject) new JsonParser().parse(new InputStreamReader(Zip3k.getAllZippedFiles(zipFilePath, zipPassword).get(fileName)));
                 if (jsonObject.has("private_key")) {
-                    return setCredentialsFromInputStream(allZippedFiles.get(fileName));
+                    return setCredentials(allZippedFiles.get(fileName));
                 }
             }
             return null;
@@ -106,13 +106,13 @@ public class ServiceAccount {
     }
 
     /**
-     * @param scopesJsonFile path to a json file with comma separated scopes
-     * @return getInstance()
+     * @param scopesFile path to a json file with comma separated scopes
+     * @return this
      */
-    public ServiceAccount setScopes(File scopesJsonFile) {
+    public ServiceAccount setScopes(File scopesFile) {
         try {
             List<String> SCOPES = new ArrayList<>();
-            String line = new String(Files.readAllBytes(Paths.get(scopesJsonFile.getAbsolutePath())));
+            String line = new String(Files.readAllBytes(Paths.get(scopesFile.getAbsolutePath())));
             for (String scope : line.split(",\r\n")) {
                 SCOPES.add(scope);
             }
@@ -126,7 +126,7 @@ public class ServiceAccount {
 
     /**
      * @param scopesSet Set of scopes provided directly form the library
-     * @return getInstance()
+     * @return this
      */
     public ServiceAccount setScopes(Set<String> scopesSet) {
         clientBuilder.setServiceAccountScopes(scopesSet);
@@ -135,7 +135,7 @@ public class ServiceAccount {
 
     /**
      * @param newUserName for subject to act as
-     * @return Returns a Google Credential acting as the user provided
+     * @return Returns a Google Credential acting as the provided userName
      */
     public GoogleCredential getHttpClient(String newUserName) throws Exception {
         if (clientBuilder == null) {
@@ -145,7 +145,7 @@ public class ServiceAccount {
             throw new Exception("Scopes have not been set for serviceAccount object.");
         }
         if (newUserName != userName) {
-            System.out.println("ServiceAccountUser is ->(" + newUserName + "), was ->(" + userName + ")");
+            System.out.println("ServiceAccountUser ->(" + userName + ") is now ->(" + newUserName + ")");
             userName = newUserName;
         }
         return clientBuilder.setServiceAccountUser(userName).build();

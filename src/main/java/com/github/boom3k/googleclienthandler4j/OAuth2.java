@@ -51,7 +51,7 @@ public class OAuth2 {
      * @param clientId     clientSecret
      * @param clientSecret clientId
      */
-    public OAuth2 setCredentialsClientSecrets(String clientSecret, String clientId) {
+    public OAuth2 setClientSecrets(String clientSecret, String clientId) {
         details.setClientSecret(clientSecret);
         details.setClientId(clientId);
         googleClientSecrets = new GoogleClientSecrets().setInstalled(details);
@@ -63,7 +63,7 @@ public class OAuth2 {
      * @param zipFilePath     path to the zip holding the client secrets json file
      * @param zipFilePassword password of zip holding the client secrets json file
      */
-    public OAuth2 setCredentialsFromZip(String zipFilePath, String zipFilePassword) {
+    public OAuth2 setZipEncryptedFile(String zipFilePath, String zipFilePassword) {
         try {
             Map<String, InputStream> allZippedFiles = Zip3k.getAllZippedFiles(zipFilePath, zipFilePassword);
             for (String fileName : allZippedFiles.keySet()) {
@@ -89,7 +89,7 @@ public class OAuth2 {
     /**
      * @param credentialFilePath path to client secret json
      */
-    public OAuth2 setCredentialsFromFilePath(String credentialFilePath) {
+    public OAuth2 setFilePath(String credentialFilePath) {
         try {
             return setCredentialsFromStream(new FileReader(new File(credentialFilePath)));
         } catch (FileNotFoundException e) {
