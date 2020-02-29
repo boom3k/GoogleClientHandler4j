@@ -114,7 +114,7 @@ public class OAuth2 {
     /**
      * @return A Google credential object that is built using the Access and Refresh Token
      */
-    public static GoogleCredential getClient() throws Exception {
+    public static GoogleCredential getGoogleCredential() throws Exception {
         if (ACCESS_TOKEN == null || REFRESH_TOKEN == null) {
             throw new Exception("Tokens have not been set for OAuth2 object.");
         }
@@ -124,5 +124,13 @@ public class OAuth2 {
                 .setJsonFactory(JSON_FACTORY).build()
                 .setAccessToken(ACCESS_TOKEN)
                 .setRefreshToken(REFRESH_TOKEN);
+    }
+
+    public static HttpTransport getHttpTransport() {
+        return HTTP_TRANSPORT;
+    }
+
+    public static JacksonFactory getJsonFactory() {
+        return JSON_FACTORY;
     }
 }

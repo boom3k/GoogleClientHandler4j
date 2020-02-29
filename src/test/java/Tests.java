@@ -15,7 +15,7 @@ public class Tests {
     public void zippedServiceAccountCredentialsTest() throws Exception {
         GoogleCredential googleCredential = ServiceAccount.getInstance().setCredentials(dummyZipPath, dummyPassword)
                 .setScopes(dummyScopesFilePath)
-                .getHttpClient("user@test.com");
+                .getGoogleCredential("user@test.com");
         System.out.println(googleCredential.getServiceAccountProjectId());
         System.out.println(googleCredential.getServiceAccountPrivateKeyId());
         System.out.println(googleCredential.getServiceAccountPrivateKey());
@@ -29,7 +29,7 @@ public class Tests {
     public void serviceAccountClientTest() throws Exception {
         GoogleCredential googleCredential = ServiceAccount.getInstance().setCredentials(dummyServiceAccountFilePath)
                 .setScopes(dummyScope)
-                .getHttpClient("user@test.com");
+                .getGoogleCredential("user@test.com");
         System.out.println(googleCredential.getServiceAccountProjectId());
         System.out.println(googleCredential.getServiceAccountPrivateKeyId());
         System.out.println(googleCredential.getServiceAccountPrivateKey());

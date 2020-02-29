@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class ServiceAccount {
     static GoogleCredential.Builder clientBuilder;
@@ -133,7 +132,7 @@ public class ServiceAccount {
      * @param newUserName for subject to act as
      * @return Returns a Google Credential acting as the user provided
      */
-    public GoogleCredential getHttpClient(String newUserName) throws Exception {
+    public GoogleCredential getGoogleCredential(String newUserName) throws Exception {
         if (clientBuilder == null) {
             throw new Exception("ServiceAccount object has not been initialized");
         }
