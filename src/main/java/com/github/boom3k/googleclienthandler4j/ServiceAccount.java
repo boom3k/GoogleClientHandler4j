@@ -13,11 +13,12 @@ import java.util.List;
 import java.util.Map;
 
 public class ServiceAccount {
-    static GoogleCredential.Builder clientBuilder;
-    static GoogleCredential credential;
-    static String userName = "NULL";
-    static List<String> scopes;
+    GoogleCredential.Builder clientBuilder;
+    GoogleCredential credential;
+    String userName = "NULL";
+    List<String> scopes;
     static ServiceAccount instance;
+    private String credentialFilePath;
 
     private ServiceAccount() {
 
@@ -52,6 +53,7 @@ public class ServiceAccount {
      * @return this
      */
     public ServiceAccount setCredentials(String credentialFilePath) {
+        this.credentialFilePath = credentialFilePath;
         try {
             return setCredentials(new FileInputStream(new File(credentialFilePath)));
         } catch (FileNotFoundException e) {

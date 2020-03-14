@@ -43,9 +43,9 @@ public class Tests {
     @Test
     public void oAuth2ClientTest() throws Exception {
         final GoogleCredential oAuth2 = OAuth2.getInstance()
-                .setFilePath(dummyOAuth2FilePath)
+                .setClientSecrets(dummyOAuth2FilePath)
                 .setTokens("OIEJ", "oiafjeij")
-                .getClient();
+                .getGoogleCredential();
         System.out.println(oAuth2.getAccessToken());
         System.out.println(oAuth2.getRefreshToken());
         System.out.println(oAuth2.getTokenServerEncodedUrl());
@@ -54,9 +54,9 @@ public class Tests {
     @Test
     public void zippedOAuth2ClientTest() throws Exception {
         final GoogleCredential oAuth2 = OAuth2.getInstance()
-                .setCredentials(dummyZipPath, dummyPassword)
+                .setClientSecrets(dummyZipPath, dummyPassword)
                 .setTokens("OIEJ", "oiafjeij")
-                .getClient();
+                .getGoogleCredential();
         System.out.println(oAuth2.getAccessToken());
         System.out.println(oAuth2.getRefreshToken());
         System.out.println(oAuth2.getTokenServerEncodedUrl());
