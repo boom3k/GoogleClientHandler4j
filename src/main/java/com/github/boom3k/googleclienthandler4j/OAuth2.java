@@ -26,7 +26,7 @@ public class OAuth2 {
         System.out.println("OAuth2 client Awaiting Tokens....");
     }
 
-    synchronized public OAuth2 getInstance() {
+    static synchronized public OAuth2 getInstance() {
         if (instance == null) {
             instance = new OAuth2();
         }

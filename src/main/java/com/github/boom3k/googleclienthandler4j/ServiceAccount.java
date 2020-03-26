@@ -24,7 +24,7 @@ public class ServiceAccount {
 
     }
 
-    synchronized public ServiceAccount getInstance() {
+    static synchronized public ServiceAccount getInstance() {
         if (instance == null) {
             instance = new ServiceAccount();
         }
