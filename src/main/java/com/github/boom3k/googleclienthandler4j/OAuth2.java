@@ -14,19 +14,19 @@ import java.io.*;
 import java.util.Map;
 
 public class OAuth2 {
-     final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
-     final JacksonFactory JSON_FACTORY = new JacksonFactory();
-     GoogleClientSecrets googleClientSecrets;
-     GoogleClientSecrets.Details details;
-     String ACCESS_TOKEN;
-     String REFRESH_TOKEN;
-     static OAuth2 instance;
+    final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+    final JacksonFactory JSON_FACTORY = new JacksonFactory();
+    GoogleClientSecrets googleClientSecrets;
+    GoogleClientSecrets.Details details;
+    String ACCESS_TOKEN;
+    String REFRESH_TOKEN;
+    static OAuth2 instance;
 
     private OAuth2() {
         System.out.println("OAuth2 client Awaiting Tokens....");
     }
 
-     static synchronized public OAuth2 getInstance() {
+    synchronized public OAuth2 getInstance() {
         if (instance == null) {
             instance = new OAuth2();
         }
@@ -76,7 +76,7 @@ public class OAuth2 {
                     if (jsonObject.has("tokens")) {
                         JsonObject tokens = jsonObject.get("tokens").getAsJsonObject();
                         setTokens(tokens.get("access_token").getAsString(),
-                                tokens.get("access_token").getAsString());
+                                tokens.get("refresh_token").getAsString());
                     }
                     return setClientSecrets(new InputStreamReader(allZippedFiles.get(fileName)));
                 }
@@ -114,7 +114,7 @@ public class OAuth2 {
     /**
      * @return A Google credential object that is built using the Access and Refresh Token
      */
-    public  GoogleCredential getGoogleCredential() throws Exception {
+    public GoogleCredential getGoogleCredential() throws Exception {
         if (ACCESS_TOKEN == null || REFRESH_TOKEN == null) {
             throw new Exception("Tokens have not been set for OAuth2 object.");
         }
@@ -126,11 +126,11 @@ public class OAuth2 {
                 .setRefreshToken(REFRESH_TOKEN);
     }
 
-    public  HttpTransport getHttpTransport() {
+    public HttpTransport getHttpTransport() {
         return HTTP_TRANSPORT;
     }
 
-    public  JacksonFactory getJsonFactory() {
+    public JacksonFactory getJsonFactory() {
         return JSON_FACTORY;
     }
 }
