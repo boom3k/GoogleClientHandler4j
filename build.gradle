@@ -3,9 +3,7 @@ plugins {
 }
 
 group 'com.boom3k'
-version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
+version '1.0-STABLE'
 
 repositories {
     mavenCentral()
