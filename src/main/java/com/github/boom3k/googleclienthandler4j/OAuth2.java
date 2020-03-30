@@ -129,14 +129,4 @@ public class OAuth2 {
                 .setAccessToken(ACCESS_TOKEN)
                 .setRefreshToken(REFRESH_TOKEN);
     }
-
-    public HttpTransport getHttpTransport() {
-        return HTTP_TRANSPORT;
-    }
-
-    public JacksonFactory getJsonFactory() {
-        return JSON_FACTORY;
-    }
-
-    //public String getAuthorizedUserEmail(){}
 }
