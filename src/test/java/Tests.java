@@ -9,6 +9,7 @@ public class Tests {
     final String dummyScopesFilePath = "DUMMY_CREDENTIALS\\DUMMY_scopes.txt";
     final String dummyZipPath = "DUMMY_CREDENTIALS\\DUMMY_credentials.zip";
     final String dummyPassword = "dummy";
+    final String dummyAdminEmail = "dummy@dumb.com";
     final String dummyScope = "https://www.googleapis.com/auth/drive";
 
     @Test
@@ -44,7 +45,7 @@ public class Tests {
     public void oAuth2ClientTest() throws Exception {
         final GoogleCredential oAuth2 = OAuth2.getInstance()
                 .setClientSecrets(dummyOAuth2FilePath)
-                .setTokens("OIEJ", "oiafjeij")
+                .setTokens("OIEJ", "oiafjeij", dummyAdminEmail)
                 .getGoogleCredential();
         System.out.println(oAuth2.getAccessToken());
         System.out.println(oAuth2.getRefreshToken());
@@ -55,7 +56,7 @@ public class Tests {
     public void zippedOAuth2ClientTest() throws Exception {
         final GoogleCredential oAuth2 = OAuth2.getInstance()
                 .setClientSecrets(dummyZipPath, dummyPassword)
-                .setTokens("OIEJ", "oiafjeij")
+                .setTokens("OIEJ", "oiafjeij", dummyAdminEmail)
                 .getGoogleCredential();
         System.out.println(oAuth2.getAccessToken());
         System.out.println(oAuth2.getRefreshToken());

@@ -20,6 +20,7 @@ public class OAuth2 {
     GoogleClientSecrets.Details details;
     String ACCESS_TOKEN;
     String REFRESH_TOKEN;
+    String authorizedUserEmail;
     static OAuth2 instance;
 
     private OAuth2() {
@@ -52,7 +53,8 @@ public class OAuth2 {
      * @param clientId     clientSecret
      * @param clientSecret clientId
      */
-    public OAuth2 setClientSecrets(String clientSecret, String clientId, boolean isAdmin) {
+    public OAuth2 setClientSecrets(String clientSecret, String clientId, String authorizedUserEmail) {
+        this.authorizedUserEmail = authorizedUserEmail;
         details.setClientSecret(clientSecret);
         details.setClientId(clientId);
         googleClientSecrets = new GoogleClientSecrets().setInstalled(details);
@@ -75,8 +77,7 @@ public class OAuth2 {
                 if (jsonObject.has("installed")) {
                     if (jsonObject.has("tokens")) {
                         JsonObject tokens = jsonObject.get("tokens").getAsJsonObject();
-                        setTokens(tokens.get("access_token").getAsString(),
-                                tokens.get("refresh_token").getAsString());
+                        setTokens(tokens.get("access_token").getAsString(), tokens.get("refresh_token").getAsString(), tokens.get("authorizedUser").getAsString());
                     }
                     return setClientSecrets(new InputStreamReader(allZippedFiles.get(fileName)));
                 }
@@ -104,10 +105,11 @@ public class OAuth2 {
      * @param refreshToken refresh token from authorization
      * @return
      */
-    public OAuth2 setTokens(String accessToken, String refreshToken) {
+    public OAuth2 setTokens(String accessToken, String refreshToken, String authorizedUserEmail) {
         this.ACCESS_TOKEN = accessToken;
         this.REFRESH_TOKEN = refreshToken;
-        System.out.println("OAuth2 tokens set!");
+        this.authorizedUserEmail = authorizedUserEmail;
+        System.out.println("OAuth2 tokens set for -> " + authorizedUserEmail);
         return this;
     }
 
@@ -133,4 +135,6 @@ public class OAuth2 {
     public JacksonFactory getJsonFactory() {
         return JSON_FACTORY;
     }
+
+    //public String getAuthorizedUserEmail(){}
 }
