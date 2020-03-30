@@ -121,6 +121,7 @@ public class OAuth2 {
             throw new Exception("Tokens have not been set for OAuth2 object.");
         }
         return new GoogleCredential.Builder()
+                .setServiceAccountUser(authorizedUserEmail)
                 .setClientSecrets(googleClientSecrets)
                 .setTransport(HTTP_TRANSPORT)
                 .setJsonFactory(JSON_FACTORY).build()
