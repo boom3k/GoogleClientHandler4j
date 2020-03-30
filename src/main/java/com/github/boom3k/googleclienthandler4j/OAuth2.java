@@ -120,6 +120,7 @@ public class OAuth2 {
         if (ACCESS_TOKEN == null || REFRESH_TOKEN == null) {
             throw new Exception("Tokens have not been set for OAuth2 object.");
         }
+        System.out.println("Returning Oauth2 tokens for -> " + authorizedUserEmail);
         return new GoogleCredential.Builder()
                 .setServiceAccountUser(authorizedUserEmail)
                 .setClientSecrets(googleClientSecrets)

@@ -79,6 +79,7 @@ public class ServiceAccount {
                 if (jsonObject.has("private_key")) {
                     return setCredentials(allZippedFiles.get(fileName));
                 }
+
             }
             return null;
         } catch (Exception e) {
