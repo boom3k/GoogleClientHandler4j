@@ -13,7 +13,7 @@ import net.lingala.zip4j.exception.ZipException;
 import java.io.*;
 import java.util.Map;
 
-public class OAuth2 {
+public class OAuth2 extends GoogleCredential{
     final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
     final JacksonFactory JSON_FACTORY = new JacksonFactory();
     GoogleClientSecrets googleClientSecrets;
@@ -122,7 +122,6 @@ public class OAuth2 {
         }
         System.out.println("Returning Oauth2 tokens for -> " + authorizedUserEmail);
         return new GoogleCredential.Builder()
-                .setServiceAccountUser(authorizedUserEmail)
                 .setClientSecrets(googleClientSecrets)
                 .setTransport(HTTP_TRANSPORT)
                 .setJsonFactory(JSON_FACTORY).build()
