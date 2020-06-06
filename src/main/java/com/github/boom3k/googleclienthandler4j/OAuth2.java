@@ -78,6 +78,8 @@ public class OAuth2 {
                     if (jsonObject.has("tokens")) {
                         JsonObject tokens = jsonObject.get("tokens").getAsJsonObject();
                         setTokens(tokens.get("access_token").getAsString(), tokens.get("refresh_token").getAsString(), tokens.get("authorizedUser").getAsString());
+                        authorizedUserEmail = tokens.get("authorizedUser").getAsString();
+                        System.out.println("AuthorizedUser: " + authorizedUserEmail);
                     }
                     return setClientSecrets(new InputStreamReader(allZippedFiles.get(fileName)));
                 }
