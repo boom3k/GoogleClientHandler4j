@@ -17,7 +17,7 @@ public class ServiceAccount {
     GoogleCredential credential;
     String userName = "NULL";
     List<String> scopes;
-    ServiceAccount instance;
+    static ServiceAccount instance;
     private String credentialFilePath;
 
     private ServiceAccount() {
