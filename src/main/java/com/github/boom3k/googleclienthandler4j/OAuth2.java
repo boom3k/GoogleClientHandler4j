@@ -16,18 +16,18 @@ import java.util.Map;
 public class OAuth2 {
     final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
     final JacksonFactory JSON_FACTORY = new JacksonFactory();
-    static OAuth2 instance;
     GoogleClientSecrets googleClientSecrets;
     GoogleClientSecrets.Details details;
     String ACCESS_TOKEN;
     String REFRESH_TOKEN;
     String authorizedUserEmail;
+    static OAuth2 instance;
 
     private OAuth2() {
         System.out.println("OAuth2 client Awaiting Tokens....");
     }
 
-    synchronized public OAuth2 getInstance() {
+    static synchronized public OAuth2 getInstance() {
         if (instance == null) {
             instance = new OAuth2();
         }
