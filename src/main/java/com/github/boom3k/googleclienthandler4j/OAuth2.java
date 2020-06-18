@@ -21,13 +21,13 @@ public class OAuth2 {
     String ACCESS_TOKEN;
     String REFRESH_TOKEN;
     String authorizedUserEmail;
-    static OAuth2 instance;
+    OAuth2 instance;
 
     private OAuth2() {
         System.out.println("OAuth2 client Awaiting Tokens....");
     }
 
-    static synchronized public OAuth2 getInstance() {
+    synchronized public OAuth2 getInstance() {
         if (instance == null) {
             instance = new OAuth2();
         }
@@ -118,9 +118,9 @@ public class OAuth2 {
     /**
      * @return A Google credential object that is built using the Access and Refresh Token
      */
-    public GoogleCredential getGoogleCredential() throws Exception {
+    public GoogleCredential getGoogleCredential() {
         if (ACCESS_TOKEN == null || REFRESH_TOKEN == null) {
-            throw new Exception("Tokens have not been set for OAuth2 object.");
+            System.out.println("Tokens have not been set for OAuth2 object!!!");
         }
 
         return new GoogleCredential.Builder()

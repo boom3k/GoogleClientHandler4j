@@ -17,14 +17,14 @@ public class ServiceAccount {
     GoogleCredential credential;
     String userName = "NULL";
     List<String> scopes;
-    static ServiceAccount instance;
+    ServiceAccount instance;
     private String credentialFilePath;
 
     private ServiceAccount() {
 
     }
 
-    static synchronized public ServiceAccount getInstance() {
+    synchronized public ServiceAccount getInstance() {
         if (instance == null) {
             instance = new ServiceAccount();
         }
