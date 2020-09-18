@@ -143,7 +143,7 @@ public class ServiceAccount {
             throw new Exception("Scopes have not been set for serviceAccount object.");
         }
         if (newUserName != userName) {
-            System.out.println("ServiceAccountUser is ->(" + newUserName + "), was ->(" + userName + ")");
+            System.out.println("ServiceAccountUser was ->(" + userName + ") is now ->(" + newUserName + ")");
             userName = newUserName;
         }
         return clientBuilder.setServiceAccountUser(userName).build();
